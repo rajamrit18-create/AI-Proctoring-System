@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#11151d" />
+    <title>Meet · Video call</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Meet home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="3"/><path d="m15 10 6-3v10l-6-3"/></svg>
+        </span>
+        <span>Meet</span>
+      </a>
+      <div class="meeting-meta">
+        <span class="status-light" id="statusLight"></span>
+        <span id="callState">Ready to join</span>
+        <span class="meta-divider"></span>
+        <time id="callTimer">00:00</time>
+      </div>
+      <div class="top-actions">
+        <button class="share-button" id="shareButton" type="button" disabled>Copy invite link</button>
+        <button class="leave-button" id="leaveButton" type="button" disabled>Leave call</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="call-column" aria-labelledby="meetingTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">VIDEO CALL <span class="room-code" id="roomCodeLabel">No room yet</span></p>
+            <h1 id="meetingTitle">Team call</h1>
+            <p class="subheading" id="callSubtitle">Video, chat, and screen sharing in one place.</p>
+          </div>
+          <div class="connection-pill" id="connectionPill"><span></span><span id="connectionText">Waiting to join</span></div>
+        </div>
+
+        <div class="video-stage">
+          <div class="video-grid">
+            <div class="video-tile remote-tile" id="remoteTile">
+              <video id="remoteVideo" autoplay playsinline></video>
+              <div class="video-placeholder" id="remotePlaceholder">
+                <div class="avatar remote-avatar" id="remoteAvatar">?</div>
+                <strong id="remoteName">Waiting for someone to join</strong>
+                <span id="remoteCaption">Share your invite link to connect a second person</span>
+              </div>
+              <div class="tile-label"><span class="tile-status"></span><span id="remoteTileName">Guest</span><span class="mute-mark" id="remoteMuteMark" hidden>Muted</span></div>
+            </div>
+
+            <div class="video-tile local-tile" id="localTile">
+              <video id="localVideo" autoplay muted playsinline></video>
+              <div class="video-placeholder" id="localPlaceholder">
+                <div class="avatar you-avatar" id="youAvatar">YOU</div>
+                <strong id="localName">You</strong>
+                <span>Camera is off</span>
+              </div>
+              <div class="tile-label"><span class="tile-status self-status"></span><span id="localTileName">You</span><span class="mute-mark" id="localMuteMark">Muted</span></div>
+            </div>
+          </div>
+          <div class="stage-note"><span class="lock-icon">◇</span> Call media is shared with the other participant</div>
+          <div class="waiting-banner" id="waitingBanner" hidden><span class="waiting-spinner"></span> Waiting for a second person…</div>
+        </div>
+
+        <div class="call-controls" aria-label="Call controls">
+          <button class="control-button" id="micButton" type="button" aria-pressed="false" disabled>
+            <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/><path class="icon-slash" d="m4 4 16 16"/></svg></span>
+            <span id="micLabel">Muted</span>
+          </button>
+          <button class="control-button" id="cameraButton" type="button" aria-pressed="false" disabled>
+            <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3M4 4l16 16" class="icon-slash"/></svg></span>
+            <span id="cameraLabel">Camera off</span>
+          </button>
+          <button class="control-button present-button" id="screenButton" type="button" aria-pressed="false" disabled>
+            <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4m-3-9 2 2 4-5"/></svg></span>
+            <span id="screenLabel">Present</span>
+          </button>
+          <button class="control-button end-call-button" id="endCallButton" type="button" disabled>
+            <span class="control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.8 14.7c4.4-3.5 10-3.5 14.4 0l1.1 1a1.7 1.7 0 0 1 .2 2.3l-1.3 1.5a1.7 1.7 0 0 1-2.1.4l-2.5-1.3a1.7 1.7 0 0 1-.9-1.6l.1-1.3a11.2 11.2 0 0 0-4 0l.1 1.3a1.7 1.7 0 0 1-.9 1.6l-2.5 1.3a1.7 1.7 0 0 1-2.1-.4l-1.3-1.5a1.7 1.7 0 0 1 .2-2.3l1.5-1Z"/></svg></span>
+            <span>End call</span>
+          </button>
+        </div>
+        <p class="media-hint" id="mediaHint">Join the room to turn on your camera and microphone.</p>
+      </section>
+
+      <aside class="side-panel" aria-label="Chat and safety warnings">
+        <div class="panel-tabs" role="tablist" aria-label="Room dashboard">
+          <button class="panel-tab active" id="chatTab" type="button" role="tab" aria-selected="true" aria-controls="chatPanel">Chat</button>
+          <button class="panel-tab" id="warningsTab" type="button" role="tab" aria-selected="false" aria-controls="warningsPanel">Warnings <span class="warning-count" id="warningCount" hidden>0</span></button>
+        </div>
+
+        <section class="tab-panel chat-panel" id="chatPanel" role="tabpanel" aria-labelledby="chatTab">
+          <div class="panel-title-row"><div><h2>Meeting chat</h2><p>Messages are checked for conduct signals.</p></div><span class="online-pill"><i></i> <span id="participantCount">0/2</span></span></div>
+          <div class="chat-messages" id="chatMessages" aria-live="polite">
+            <div class="chat-empty" id="chatEmpty"><div class="empty-icon">···</div><strong>Start the conversation</strong><span>Messages in this room appear here.</span></div>
+          </div>
+          <form class="chat-compose" id="chatForm">
+            <label class="sr-only" for="chatInput">Write a message</label>
+            <input id="chatInput" name="message" type="text" maxlength="2000" placeholder="Message everyone…" autocomplete="off" disabled />
+            <button id="sendChatButton" type="submit" aria-label="Send message" disabled><svg viewBox="0 0 24 24"><path d="m4 4 17 8-17 8 3-8-3-8Z"/><path d="M7 12h14"/></svg></button>
+          </form>
+          <div class="chat-footnote"><span class="tiny-shield">◇</span> Please keep messages respectful.</div>
+        </section>
+
+        <section class="tab-panel warnings-panel" id="warningsPanel" role="tabpanel" aria-labelledby="warningsTab" hidden>
+          <div class="panel-title-row"><div><h2>Warning dashboard</h2><p>Advisory messages shown only to you.</p></div><span class="warning-live" id="monitoringStatus"><i></i> Checking</span></div>
+          <div class="monitor-status-card" id="monitorStatusCard">
+            <div class="status-shield">◇</div>
+            <div><strong id="monitorStatusTitle">AI checks unavailable</strong><span id="monitorStatusDetail">Add an OpenAI API key to enable moderation.</span></div>
+          </div>
+          <div class="warning-list" id="warningList" aria-live="polite">
+            <div class="warning-empty" id="warningEmpty"><span class="warning-empty-icon">✓</span><strong>No warnings</strong><span>Potential concerns will appear here as private reminders.</span></div>
+          </div>
+          <div class="warning-disclaimer"><span>ⓘ</span><p>Automated checks can be wrong or miss things. These messages are reminders, not proof or a decision.</p></div>
+        </section>
+      </aside>
+    </main>
+
+    <div class="join-overlay" id="joinOverlay">
+      <form class="join-card" id="joinForm">
+        <div class="join-brand-mark"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="3"/><path d="m15 10 6-3v10l-6-3"/></svg></div>
+        <p class="eyebrow">MEET · VIDEO CALL</p>
+        <h1>Join a call</h1>
+        <p class="join-intro">Connect face to face, send a message, or share your screen during the call.</p>
+        <label class="field-label" for="displayName">Your name</label>
+        <input class="join-input" id="displayName" name="name" maxlength="40" placeholder="e.g. Alex" required autocomplete="name" />
+        <label class="field-label" for="roomInput">Room code <span>Optional · leave blank to create a room</span></label>
+        <input class="join-input room-input" id="roomInput" name="room" maxlength="12" placeholder="Enter a room code" autocomplete="off" />
+        <label class="consent-row" for="consentCheck"><input id="consentCheck" type="checkbox" required /><span><strong>I understand how moderation works</strong><small>My chat, short audio samples, and sampled video frames may be sent to the hosted AI service for checks when it is configured. The other participant sees this same notice. This app does not store submitted media samples.</small></span></label>
+        <p class="join-error" id="joinError" role="alert" hidden></p>
+        <button class="join-submit" id="joinSubmit" type="submit">Join room <span>→</span></button>
+        <div class="secure-note"><span>◇</span> Camera and microphone access starts only after you join.</div>
+      </form>
+    </div>
+
+    <div class="toast" id="warningToast" role="status" aria-live="assertive" hidden>
+      <div class="toast-icon" aria-hidden="true">!</div>
+      <div class="toast-copy"><span class="toast-kicker">PRIVATE WARNING</span><p id="toastMessage"></p></div>
+      <button class="toast-close" id="toastClose" type="button" aria-label="Dismiss warning">×</button>
+    </div>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
